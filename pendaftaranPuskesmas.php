@@ -141,10 +141,20 @@
                                         required>
                                         <option value selected disabled>--
                                             Pilih Poli --</option>
-                                        <option>Poli Umum</option>
-                                        <option>Poli Gigi</option>
-                                        <option>Kesehatan Ibu &
-                                            Anak</option>
+                                            <?php
+                                            include 'connection.php';
+                                            $query = "SELECT poli FROM dokter GROUP BY poli";
+                                            $result = $connect->query($query);
+                                            if ($result->num_rows > 0) {
+                                                while ($row = $result->fetch_assoc()) {
+                                                ?>
+                                                <option><?=$row['poli']?></option>
+                                                <?php
+                                                }
+                                            } else {
+                                                echo "<option>Tidak ada poli tersedia</option>";
+                                            }   
+                                            ?>
                                     </select>
                                 </div>
                                 <div class="col-md-6">
