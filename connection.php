@@ -5,7 +5,7 @@ $username = "root";
 $password = "";
 $database = "rumahsakit";
 
-$connect = new mysqli($hostname, $username, $password, $database, $port);
+$connect = new mysqli($host, $username, $password, $database, $port);
 if ($connect->connect_error) {
     die("Maaf koneksi gagal ".$connect->connect_error);
 } 
