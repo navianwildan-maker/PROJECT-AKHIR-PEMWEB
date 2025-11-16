@@ -46,7 +46,7 @@
             <div class="container">
                 <img style="padding-left: 2%;" width="90"
                     src="logo puskesmas nusantara.png">
-                <a class="navbar-brand" href="TA_PUSKESMAS.html"
+                <a class="navbar-brand" href="TA_PUSKESMAS.php"
                     style="font-weight: bold; padding-top: 1%; padding-bottom: 1%; padding-left: 1%;">Puskesmas
                     Nusantara</a>
 

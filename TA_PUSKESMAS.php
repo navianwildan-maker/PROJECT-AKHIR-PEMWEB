@@ -79,7 +79,7 @@
                 </ul>
 
                 <div class="btn btn-light rounded-pill px-1 py-1 me-1">
-                    <a href="pendaftaranPuskesmas.html" class="btn nav-link"
+                    <a href="pendaftaranPuskesmas.php" class="btn nav-link"
                         style="background-color: #0f766e; border-color: #0f766e; color: white; border-radius: 100px; padding: 1%;">Pendaftaran
                         Online</a>
                 </div>
