@@ -13,6 +13,7 @@
     
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="icon" type="image/x-icon" href="logo puskesmas nusantara.png">
 
     <style>
         body {
@@ -53,7 +54,7 @@
         <div class="container">
             <img style="padding-left: 2%;" width="90"
                 src="logo puskesmas nusantara.png" alt="Logo Puskesmas">
-            <a class="navbar-brand" href="TA_PUSKESMAS.html"
+            <a class="navbar-brand" href="TA_PUSKESMAS.php"
                 style="font-weight: bold; padding-top: 1%; padding-bottom: 1%; padding-left: 1%;">Puskesmas
                 Nusantara</a>
 
@@ -71,28 +72,28 @@
                     <li class="nav-item">
                         <a class="nav-link active"
                             aria-current="page"
-                            href="TA_PUSKESMAS.html#profil-pks">Profil</a>
+                            href="TA_PUSKESMAS.php#profil-pks">Profil</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link"
-                            href="TA_PUSKESMAS.html#layanan">Layanan</a>
+                            href="TA_PUSKESMAS.php#layanan">Layanan</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="TA_PUSKESMAS.html#jadwal"
+                        <a class="nav-link" href="TA_PUSKESMAS.php#jadwal"
                             aria-disabled="true">Jadwal</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="TA_PUSKESMAS.html#kontak"
+                        <a class="nav-link" href="TA_PUSKESMAS.php#kontak"
                             aria-expanded="false">Kontak</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="TA_PUSKESMAS.html#pesanKamar"
+                        <a class="nav-link" href="TA_PUSKESMAS.php#pesanKamar"
                             aria-expanded="false">Pesan kamar</a>
                     </li>
                 </ul>
 
                 <div class="btn btn-light rounded-pill px-1 py-1 me-1">
-                    <a href="#" class="btn nav-link"
+                    <a href="pendaftaranPuskesmas.php" class="btn nav-link"
                         style="background-color: #0f766e; border-color: #0f766e; color: white; border-radius: 100px; padding: 1%">Pendaftaran
                         Online</a>
                 </div>

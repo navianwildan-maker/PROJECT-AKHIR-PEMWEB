@@ -11,7 +11,7 @@
             crossorigin="anonymous">
         <link rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
+        <link rel="icon" type="image/x-icon" href="logo puskesmas nusantara.png">
         <style>
             body{
                 background-color: white;
@@ -65,22 +65,22 @@
                         <li class="nav-item">
                             <a class="nav-link active"
                                 aria-current="page"
-                                href="TA_PUSKESMAS.html#profil-pks">Profil</a>
+                                href="TA_PUSKESMAS.php#profil-pks">Profil</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link"
-                                href="TA_PUSKESMAS.html#layanan">Layanan</a>
+                                href="TA_PUSKESMAS.php#layanan">Layanan</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="TA_PUSKESMAS.html#jadwal"
+                            <a class="nav-link" href="TA_PUSKESMAS.php#jadwal"
                                 aria-disabled="true">Jadwal</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="TA_PUSKESMAS.html#kontak"
+                            <a class="nav-link" href="TA_PUSKESMAS.php#kontak"
                                 aria-expanded="false">Kontak</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="TA_PUSKESMAS.html#pesanKamar"
+                            <a class="nav-link" href="TA_PUSKESMAS.php#pesanKamar"
                                 aria-expanded="false">Pesan kamar</a>
                         </li>
                     </ul>
@@ -105,14 +105,14 @@
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
                         <div class="card shadow-lg border-0 p-4 p-md-5">
-                            <form class="row g-3">
+                            <form class="row g-3" action="daftarPasien.php" method="post">
                                 <div class="col-md-12">
                                     <label for="nama"
                                         class="form-label">Nama
                                         Lengkap</label>
                                     <input type="text"
                                         class="form-control form-control-lg"
-                                        id="nama"
+                                        id="nama" name="nama"
                                         placeholder="Masukkan nama lengkap Anda"
                                         required>
                                 </div>
@@ -121,7 +121,7 @@
                                         (No. KTP)</label>
                                     <input type="text"
                                         class="form-control form-control-lg"
-                                        id="nik" placeholder="16 digit NIK"
+                                        id="nik" name="nik" placeholder="16 digit NIK"
                                         required>
                                 </div>
                                 <div class="col-md-6">
@@ -129,14 +129,14 @@
                                         BPJS (jika ada)</label>
                                     <input type="text"
                                         class="form-control form-control-lg"
-                                        id="bpjs"
+                                        id="bpjs" name="bpjs"
                                         placeholder="Nomor kartu BPJS">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="poli"
                                         class="form-label">Pilih Poli
                                         Tujuan</label>
-                                    <select id="poli"
+                                    <select id="poli" name="poli"
                                         class="form-select form-select-lg"
                                         required>
                                         <option value selected disabled>--
@@ -163,7 +163,7 @@
                                         Berobat</label>
                                     <input type="date"
                                         class="form-control form-control-lg"
-                                        id="tanggal" required>
+                                        id="tanggal" name="tanggal_berobat" required>
                                 </div>
                                 <div class="col-12 text-center mt-4">
                                     <button type="submit"

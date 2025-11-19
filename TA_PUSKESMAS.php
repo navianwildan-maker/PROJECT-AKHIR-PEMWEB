@@ -244,32 +244,20 @@
                                 <th scope="col" class="p-3">Jam Praktik</th>
                             </tr>
                         </thead>
+                        <tbody></tbody>
                         <?php
-                        include("connection.php");
+                        include 'connection.php';
                         $sql = "SELECT
-    D.nama,
-    D.poli,
-    GROUP_CONCAT(
-        J.hari_praktik 
-        ORDER BY 
-            FIELD(J.hari_praktik, 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu')
-        SEPARATOR ',' 
-    ) AS Daftar_Hari_Mentah,
-    -- Menggabungkan Jam Mulai dan Jam Selesai
-    CONCAT(
-        TIME_FORMAT(MIN(J.jam_mulai), '%H:%i'), 
-        ' - ', 
-        TIME_FORMAT(MAX(J.jam_selesai), '%H:%i'),
-        ' WITA' -- Tambahkan zona waktu di sini atau di logika aplikasi
-    ) AS jam_praktik
-FROM
-    Dokter D
-JOIN
-    Jadwal_Dokter J ON D.id_dokter = J.id_dokter
-GROUP BY
-    D.id_dokter, D.nama, D.poli -- Kelompokkan berdasarkan data dokter
-ORDER BY
-    D.id_dokter;";
+                        D.nama, D.poli, GROUP_CONCAT(J.hari_praktik ORDER BY FIELD
+                        (J.hari_praktik, 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu')
+                            SEPARATOR ',') AS Daftar_Hari_Mentah,
+                        CONCAT(
+                            TIME_FORMAT(MIN(J.jam_mulai), '%H:%i'), ' - ', 
+                            TIME_FORMAT(MAX(J.jam_selesai), '%H:%i'),' WITA' 
+                        ) AS jam_praktik FROM Dokter D JOIN Jadwal_Dokter J 
+                        ON D.id_dokter = J.id_dokter GROUP BY D.id_dokter, D.nama, D.poli
+                        ORDER BY D.id_dokter;";
+
                         function formatJadwalHari(string $dayList): string
                         {
                             
@@ -292,7 +280,7 @@ ORDER BY
                                 return implode(' & ', $days);
                             }
 
-                            // 2. Cek Urutan
+                            //Cek Urutan
                             $isSequential = true;
                             $prevIndex = 0; 
                         
@@ -309,7 +297,7 @@ ORDER BY
                                 $prevIndex = $currentIndex;
                             }
 
-                            // 3. Penentuan Format Output
+                            //Format Output
                             if ($isSequential) {
                                 $firstDay = $days[0];
                                 $lastDay = $days[$count - 1];
@@ -324,17 +312,21 @@ ORDER BY
                         $result = mysqli_query($connect, $sql);
 
                         if ($result && mysqli_num_rows($result) > 0) {
-                            echo "<tbody>";
                             while ($row = mysqli_fetch_assoc($result)) {
                                 $formattedDay = formatJadwalHari($row['Daftar_Hari_Mentah']);
-                                echo "<tr>";
-                                echo "<td class='p-3'>" . htmlspecialchars($row['nama']) . "</td>";
-                                echo "<td class='p-3'>" . htmlspecialchars($row['poli']) . "</td>";
-                                echo "<td class='p-3'>" . htmlspecialchars($formattedDay) . "</td>";
-                                echo "<td class='p-3'>" . htmlspecialchars($row['jam_praktik']) . "</td>";
-                                echo "</tr>";
+                                ?>
+                                
+                                <tr>
+                                <td class='p-3'><?=$row['nama'] ?></td>
+                                <td class='p-3'><?=$row['poli'] ?></td>
+                                <td class='p-3'><?=$formattedDay ?></td>
+                                <td class='p-3'><?=$row['jam_praktik'] ?></td>
+                                </tr>
+                                <?php
                             }
-                            echo "</tbody>";
+                            ?>
+                            </tbody>
+                        <?php
                         } else {
                             echo "<tbody><tr><td colspan='4' class='p-3 text-center'>Tidak ada jadwal dokter tersedia.</td></tr></tbody>";
                         }
@@ -358,7 +350,7 @@ ORDER BY
                         <p class="text-muted">Kami menyediakan kamar rawat inap sesuai kategori 1-3 dengan fasilitas
                             yang berbeda.
                         </p>
-                        <a href="pesanKamar.html"
+                        <a href="pesanKamar.php"
                             class="btn btn-outline-success btn-lg rounded-pill px-sm-5 py-3 me-3">Pesan Kamar</a>
                     </div>
                 </div>
