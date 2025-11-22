@@ -254,9 +254,8 @@
                         CONCAT(
                             TIME_FORMAT(MIN(J.jam_mulai), '%H:%i'), ' - ', 
                             TIME_FORMAT(MAX(J.jam_selesai), '%H:%i'),' WITA' 
-                        ) AS jam_praktik FROM Dokter D JOIN Jadwal_Dokter J 
-                        ON D.id_dokter = J.id_dokter GROUP BY D.id_dokter, D.nama, D.poli
-                        ORDER BY D.id_dokter;";
+                        ) AS jam_praktik FROM Dokter D JOIN Jadwal_Dokter J  ON D.id_dokter = J.id_dokter 
+                        GROUP BY D.id_dokter, D.nama, D.poli ORDER BY D.id_dokter;";
 
                         function formatJadwalHari(string $dayList): string
                         {

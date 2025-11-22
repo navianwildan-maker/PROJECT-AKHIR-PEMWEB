@@ -8,7 +8,13 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body style="padding-top: 100px;">
-
+    <?php
+    session_start();
+    if (empty($_SESSION['username'])) {
+        header("Location: login.php?pesan=belum_login");
+        exit();
+    }
+    ?>
     <nav id="navbarPuskesmas" class="navbar navbar-expand-lg navbar-light bg-white shadow-lg fixed-top">
         <div class="container">
             <img style="padding-left: 2%;" width="90" src="logo puskesmas nusantara.png" alt="Logo">
@@ -21,13 +27,13 @@
             <div class="collapse navbar-collapse" id="navbarPuskesmas">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="dataPendaftaranOnline.html">Data Pendaftaran Pasien</a>
+                        <a class="nav-link" href="dataPendaftaranOnline.php">Data Pendaftaran Pasien</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active fw-bold text-success" href="dataPesanKamar.html">Data Kamar Pasien</a>
+                        <a class="nav-link active fw-bold text-success" href="dataPesanKamar.php">Data Kamar Pasien</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-danger" href="login.html">Logout</a>
+                        <a class="nav-link text-danger" href="logout.php">Logout</a>
                     </li>
                 </ul>
             </div>
@@ -53,6 +59,11 @@
                                 <th scope="col">Aksi</th>
                             </tr>
                         </thead>
+                        <?php
+                        include 'connection.php';
+                        $result = mysqli_query($connect, "SELECT * FROM pesankamar");
+                        while ($row = mysqli_fetch_assoc($result)) {
+                        ?>
                         <tbody>
                             <tr>
                                 <th scope="row">101</th>
@@ -64,9 +75,7 @@
                                     <button class="btn btn-primary btn-sm"><i class="bi bi-eye"></i> Detail</button>
                                 </td>
                             </tr>
-                                    <button class="btn btn-primary btn-sm"><i class="bi bi-eye"></i> Detail</button>
-                                </td>
-                            </tr>
+                        <?php } ?>
                         </tbody>
                     </table>
                 </div>

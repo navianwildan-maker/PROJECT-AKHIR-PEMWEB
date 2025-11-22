@@ -6,9 +6,25 @@
     <title>Dashboard - Pendaftaran</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        .action-buttons {
++           display: flex;
++           gap: .4rem;
++           align-items: center;
++           flex-wrap: nowrap; /* jangan wrap ke baris baru */
++       }
++       .action-buttons .btn {
++           white-space: nowrap; /* teks tombol tidak terpotong ke baris baru */
++       }
+    </style>
 </head>
 <body style="padding-top: 100px;">
-
+    <?php
+    session_start();
+    if (empty($_SESSION['username'])) {
+        header("Location: login.php?pesan=belum_login");
+    }
+    ?>
     <nav id="navbarPuskesmas" class="navbar navbar-expand-lg navbar-light bg-white shadow-lg fixed-top">
         <div class="container">
             <img style="padding-left: 2%;" width="90" src="logo puskesmas nusantara.png" alt="Logo">
@@ -21,13 +37,13 @@
             <div class="collapse navbar-collapse" id="navbarPuskesmas">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active fw-bold text-success" href="dataPendaftaranOnline.html">Data Pendaftaran Pasien</a>
+                        <a class="nav-link active fw-bold text-success" href="dataPendaftaranOnline.php">Data Pendaftaran Pasien</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="dataPesanKamar.html">Data Kamar Pasien</a>
+                        <a class="nav-link" href="dataPesanKamar.php">Data Kamar Pasien</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-danger" href="login.html">Logout</a>
+                        <a class="nav-link text-danger" href="logout.php">Logout</a>
                     </li>
                 </ul>
             </div>
@@ -45,26 +61,42 @@
                     <table class="table table-striped table-hover table-bordered">
                         <thead class="table-success">
                             <tr>
+                                <th>ID Kunjungan</th>
                                 <th>No Antri</th>
                                 <th>Nama Pasien</th>
-                                <th>Tanggal Lahir</th>
-                                <th>Alamat</th>
-                                <th>No. Telepon</th>
+                                <th>Poli Tujuan</th>
+                                <th>Dokter </th>
+                                <th>Tanggal Berobat</th>
+                                <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
+                        <?php
+                        include 'connection.php';
+                        $query = "SELECT k.id_kunjungan, k.nomor_antrian, p.nama, k.poli_tujuan, d.nama, k.tanggal_kunjungan, k.status 
+                                  FROM kunjungan k INNER JOIN jadwal_dokter j ON j.id_jadwal = k.id_jadwal
+                                  INNER JOIN dokter d ON j.id_dokter = d.id_dokter
+                                  INNER JOIN pasien p ON k.id_pasien = p.id_pasien";
+                        $result = mysqli_query($connect, $query);
+                        while ($row = mysqli_fetch_array($result)) {
+                        ?>
                         <tbody>
                             <tr>
-                                <th>1</th>
-                                <td>Budiono Siregarr</td>
-                                <td>1990-05-15</td>
-                                <td>Jl. Merdeka No. 10</td>
-                                <td>081234567890</td>
+                                <th><?= $row['id_kunjungan'] ?></th>
+                                <td><?= $row['nomor_antrian'] ?></td>
+                                <td><?= $row['nama'] ?></td>
+                                <td><?= $row['poli_tujuan'] ?></td>
+                                <td><?= $row['nama'] ?></td>
+                                <td><?= $row['tanggal_kunjungan'] ?></td>
+                                <td><?= $row['status'] ?></td>
                                 <td>
-                                    <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-square"></i> Edit</button>
-                                    <button class="btn btn-danger btn-sm ms-1"><i class="bi bi-trash"></i> Hapus</button>
+                                    <div class="action-buttons" style="display: flex; gap: 0.4rem;">
+                                        <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-square"></i> Edit</button>
+                                        <a href="deleteDataPasien.php?id=<?= $row['id_kunjungan'] ?>" class="btn btn-danger btn-sm ms-1"><i class="bi bi-trash"></i> Hapus</a>
+                                    </div>
                                 </td>
                             </tr>
+                            <?php } ?>
                             </tbody>
                     </table>
                 </div>

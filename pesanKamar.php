@@ -112,14 +112,14 @@
                 <div class="col-lg-8">
                     
                     <div class="card shadow-lg border-0 p-4 p-md-5 rounded-5">
-                        <form class="row g-3" id="formPemesanan">
+                        <form class="row g-3" id="formPemesanan" method="post" action="daftarKamar.php">
                             <div class="col-md-12">
                                 <label for="nama"
                                     class="form-label">Nama
                                     Lengkap</label>
                                 <input type="text"
                                     class="form-control form-control-lg"
-                                    id="nama"
+                                    id="nama" name="nama"
                                     placeholder="Masukkan nama lengkap Anda"
                                     required>
                             </div>
@@ -128,7 +128,7 @@
                                     (No. KTP)</label>
                                 <input type="text"
                                     class="form-control form-control-lg"
-                                    id="nik" placeholder="16 digit NIK"
+                                    id="nik" name="nik" placeholder="16 digit NIK"
                                     required>
                             </div>
                             
@@ -137,14 +137,14 @@
                                     BPJS (jika ada)</label>
                                 <input type="text"
                                     class="form-control form-control-lg"
-                                    id="bpjs"
+                                    id="bpjs" name="bpjs"
                                     placeholder="Nomor kartu BPJS">
                             </div>
 
                             <div class="col-md-6">
-                                <label for="poli"
+                                <label for="kamar"
                                     class="form-label">Pilih Kelas Kamar</label>
-                                <select id="poli"
+                                <select id="kamar" name="kamar"
                                     class="form-select form-select-lg"
                                     required>
                                     <option value="" selected disabled>-- Pilih Kamar --</option>
@@ -160,7 +160,7 @@
                                     class="form-label">Tanggal
                                     Pemesanan</label>
                                 <input type="date"
-                                    class="form-control form-control-lg"
+                                    class="form-control form-control-lg" name="tanggal"
                                     id="tanggal" required>
                             </div>
                         
@@ -188,12 +188,12 @@
                                         <input class="form-check-input" type="radio" name="paymentMethod" id="bcaVA" checked>
                                     </label>
                 
-                                    <label for="alfamart" class="list-group-item list-group-item-action py-3 px-3">
+                                    <label for="briVA" class="list-group-item list-group-item-action py-3 px-3">
                                         <div class="d-flex align-items-center">
                                             <img src="BRI_2020.svg.png" alt="BRI" style="width: 50px;" class="me-3">
                                             <span class="fw-medium">BRI Virtual Account</span>
                                         </div>
-                                        <input class="form-check-input" type="radio" name="paymentMethod" id="briVA">
+                                        <input class="form-check-input" type="radio" name="paymentMethod" id="briVA" >
                                     </label>
                                 </div>
                             </div>

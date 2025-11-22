@@ -16,6 +16,18 @@
     </style>
 </head>
 <body>
+    <?php
+    if (isset($_GET['pesan'])) {
+        $pesan = $_GET['pesan'];
+        if ($pesan == "gagal") {
+        echo "<script>alert('Login gagal. Periksa username dan password Anda.');</script>";
+        } else if ($pesan == "logout") {
+        echo "<script>alert('Anda telah berhasil logout.');</script>";
+        } else if ($pesan == "belum_login") {
+        echo "<script>alert('Anda harus login terlebih dahulu.');</script>";
+        }
+    }
+    ?>
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-5 col-lg-4">
@@ -23,7 +35,7 @@
                     <div class="card-body p-4">
                         <h3 class="card-title text-center mb-4">Login Admin Puskesmas</h3>
                         
-                        <form onsubmit="event.preventDefault(); window.location.href='dataPendaftaranOnline.html';">
+                        <form method="post" action="loginProcess.php">
                             <div class="mb-3">
                                 <label for="username" class="form-label">Username</label>
                                 <input type="text" class="form-control" id="username" name="username" required>
