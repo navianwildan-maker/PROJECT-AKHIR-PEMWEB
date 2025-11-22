@@ -8,14 +8,14 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         .action-buttons {
-+           display: flex;
-+           gap: .4rem;
-+           align-items: center;
-+           flex-wrap: nowrap; /* jangan wrap ke baris baru */
-+       }
-+       .action-buttons .btn {
-+           white-space: nowrap; /* teks tombol tidak terpotong ke baris baru */
-+       }
+           display: flex;
+           gap: .4rem;
+           align-items: center;
+           flex-wrap: nowrap; /* jangan wrap ke baris baru */
+       }
+       .action-buttons .btn {
+           white-space: nowrap; /* teks tombol tidak terpotong ke baris baru */
+       }
     </style>
 </head>
 <body style="padding-top: 100px;">
