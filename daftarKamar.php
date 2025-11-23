@@ -6,7 +6,7 @@ $nik = trim($_POST['nik'] ?? '');
 $bpjs = trim($_POST['bpjs'] ?? '');
 $kamar = trim($_POST['kamar'] ?? '');
 $tanggal = trim($_POST['tanggal'] ?? '');
-$status = "Assign";
+$status = "Booking"; 
 
 $isSuccess = false;
 $errorMessage = "";
@@ -14,30 +14,45 @@ $errorMessage = "";
 if(empty($nama) || empty($kamar) || empty($tanggal)) {
     $errorMessage = "Data tidak lengkap.";
 } else {
-    $query = "INSERT INTO pemesanan_kamar (nama_pemesan, nik, bpjs, kelas_kamar, tanggal_pemesanan, total_tagihan, metode_pembayaran) VALUES (?, ?, ?, ?, ?, ?, ?)";
-
+    // Hitung harga untuk tampilan (TIDAK DISIMPAN KE DB KARENA KOLOM TIDAK ADA)
     $harga = 0;
     if($kamar == "Kelas 1") $harga = 500000;
     elseif($kamar == "Kelas 2") $harga = 300000;
     elseif($kamar == "Kelas 3") $harga = 150000;
     elseif($kamar == "VIP/VVIP") $harga = 1000000;
     $total = $harga + 5500; 
-    $metode = "Virtual Account"; 
+    $id_pasien = 0;
+    $cekPasien = mysqli_query($connect, "SELECT id_pasien FROM pasien WHERE nik = '$nik'");
+    if($row = mysqli_fetch_assoc($cekPasien)){
+        $id_pasien = $row['id_pasien'];
+    }
 
-    $stmt = mysqli_prepare($connect, "INSERT INTO pemesanan_kamar (nama_pemesan, nik, bpjs, kelas_kamar, tanggal_pemesanan, total_tagihan, metode_pembayaran) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $sql = "INSERT INTO pesankamar (id_pasien, nama, nik, bpjs, kelas, tanggal_masuk, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    
+    $stmt = mysqli_prepare($connect, $sql);
     
     if ($stmt) {
-        mysqli_stmt_bind_param($stmt, "sssssis", $nama, $nik, $bpjs, $kamar, $tanggal, $total, $metode);
-        if (mysqli_stmt_execute($stmt)) {
-            $isSuccess = true;
-        } else {
-            $errorMessage = "Gagal menyimpan data: " . mysqli_stmt_error($stmt);
+        mysqli_stmt_bind_param($stmt, "issssss", $id_pasien, $nama, $nik, $bpjs, $kamar, $tanggal, $status);
+        
+        try {
+            if (mysqli_stmt_execute($stmt)) {
+                $isSuccess = true;
+            } else {
+                if(mysqli_errno($connect) == 1062){
+                     $errorMessage = "Gagal: Pasien dengan NIK/BPJS ini sudah memesan kamar (Data Duplikat).";
+                } else {
+                     $errorMessage = "Gagal menyimpan data: " . mysqli_stmt_error($stmt);
+                }
+            }
+        } catch (Exception $e) {
+            $errorMessage = "Terjadi kesalahan: " . $e->getMessage();
         }
         mysqli_stmt_close($stmt);
     } else {
         $errorMessage = "Query Error: " . mysqli_error($connect);
     }
 }
+
 mysqli_close($connect);
 ?>
 
@@ -90,32 +105,13 @@ mysqli_close($connect);
             border-bottom: 1px dashed #e2e8f0;
             padding-bottom: 15px;
         }
-        .detail-row:last-child {
-            border-bottom: none;
-        }
-        .detail-label {
-            color: #64748b;
-            font-size: 0.9rem;
-        }
-        .detail-value {
-            font-weight: 600;
-            color: #1e293b;
-            text-align: right;
-        }
+        .detail-label { color: #64748b; font-size: 0.9rem; }
+        .detail-value { font-weight: 600; color: #1e293b; text-align: right; }
         .btn-home {
-            background-color: #0f766e;
-            color: white;
-            border-radius: 50px;
-            padding: 12px 30px;
-            width: 100%;
-            font-weight: 600;
-            transition: all 0.3s;
+            background-color: #0f766e; color: white; border-radius: 50px;
+            padding: 12px 30px; width: 100%; font-weight: 600; transition: all 0.3s;
         }
-        .btn-home:hover {
-            background-color: #0d6efd;
-            color: white;
-            transform: translateY(-2px);
-        }
+        .btn-home:hover { background-color: #0d6efd; color: white; transform: translateY(-2px); }
     </style>
 </head>
 <body>
@@ -124,15 +120,13 @@ mysqli_close($connect);
     <?php if ($isSuccess): ?>
     <div class="card-receipt">
         <div class="receipt-header">
-            <div class="icon-circle">
-                <i class="bi bi-check-lg" style="font-size: 40px;"></i>
-            </div>
+            <div class="icon-circle"><i class="bi bi-check-lg" style="font-size: 40px;"></i></div>
             <h3 class="fw-bold mb-1">Pemesanan Berhasil!</h3>
-            <p class="mb-0 opacity-75">Terima kasih telah menggunakan layanan kami</p>
+            <p class="mb-0 opacity-75">Data tersimpan di sistem RS</p>
         </div>
         <div class="receipt-body">
             <div class="text-center mb-4">
-                <p class="text-muted small mb-1">Total Tagihan</p>
+                <p class="text-muted small mb-1">Estimasi Tagihan</p>
                 <h2 class="fw-bold text-success">Rp<?= number_format($total, 0, ',', '.') ?></h2>
             </div>
 
@@ -162,9 +156,7 @@ mysqli_close($connect);
     <?php else: ?>
     <div class="card-receipt">
         <div class="receipt-header" style="background: #ef4444;">
-            <div class="icon-circle">
-                <i class="bi bi-x-lg" style="font-size: 40px;"></i>
-            </div>
+            <div class="icon-circle"><i class="bi bi-x-lg" style="font-size: 40px;"></i></div>
             <h3 class="fw-bold mb-1">Pemesanan Gagal</h3>
         </div>
         <div class="receipt-body text-center">
@@ -174,6 +166,5 @@ mysqli_close($connect);
     </div>
     <?php endif; ?>
 </div>
-
 </body>
 </html>

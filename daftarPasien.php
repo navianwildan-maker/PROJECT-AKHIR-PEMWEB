@@ -23,7 +23,6 @@ if ($nama === '' || $nik === '' || $poli === '' || $input_date === '') {
         $errorMsg = "Format tanggal tidak valid.";
     } else {
         $tanggal_berobat = $dt->format('Y-m-d');
-
         $day_en = $dt->format('l');
         $map = [
             'Sunday'    => 'Minggu', 'Monday'    => 'Senin',
@@ -42,7 +41,7 @@ if ($nama === '' || $nik === '' || $poli === '' || $input_date === '') {
              
         if (!$stmt) {
             $showError = true;
-            $errorMsg = "Database Error: " . mysqli_error($connect);
+            $errorMsg = "Database Error (Tabel Jadwal/Dokter mungkin hilang): " . mysqli_error($connect);
         } else {
             mysqli_stmt_bind_param($stmt, 'ss', $poli, $hari_praktik);
             mysqli_stmt_execute($stmt);
@@ -62,17 +61,20 @@ if ($nama === '' || $nik === '' || $poli === '' || $input_date === '') {
                     } else {
                         $ins1 = mysqli_prepare($connect, "INSERT INTO pasien (nama, nik, bpjs) VALUES (?, ?, ?)");
                         mysqli_stmt_bind_param($ins1, 'sss', $nama, $nik, $bpjs);
-                        mysqli_stmt_execute($ins1);
+                        if(!mysqli_stmt_execute($ins1)){
+                             throw new Exception("Gagal insert pasien: " . mysqli_stmt_error($ins1));
+                        }
                         $id_pasien = mysqli_insert_id($connect);
                         mysqli_stmt_close($ins1);
                     }
 
                     $q_antrian = mysqli_query($connect, "SELECT COUNT(*) as total FROM kunjungan WHERE id_jadwal = '$id_jadwal' AND tanggal_kunjungan = '$tanggal_berobat'");
+                    if(!$q_antrian) throw new Exception("Tabel Kunjungan tidak ditemukan.");
+                    
                     $r_antrian = mysqli_fetch_assoc($q_antrian);
                     $nomor_antrian = $r_antrian['total'] + 1;
-                    $ins2 = mysqli_prepare($connect, "INSERT INTO kunjungan (id_pasien, id_jadwal, poli_tujuan, tanggal_kunjungan, nomor_antrian, status) VALUES (?, ?, ?, ?, ?, ?)");
                     
-
+                    $ins2 = mysqli_prepare($connect, "INSERT INTO kunjungan (id_pasien, id_jadwal, poli_tujuan, tanggal_kunjungan, nomor_antrian, status) VALUES (?, ?, ?, ?, ?, ?)");
                     mysqli_stmt_bind_param($ins2, 'iissis', $id_pasien, $id_jadwal, $poli, $tanggal_berobat, $nomor_antrian, $status);
                     
                     if (!mysqli_stmt_execute($ins2)) {
@@ -99,7 +101,7 @@ if ($nama === '' || $nik === '' || $poli === '' || $input_date === '') {
             } else {
                 mysqli_stmt_close($stmt);
                 $showError = true;
-                $errorMsg = "Jadwal dokter tidak ditemukan untuk poli $poli pada hari $hari_praktik.";
+                $errorMsg = "Dokter tidak ditemukan untuk poli $poli pada hari $hari_praktik.";
             }
         }
     }
@@ -138,54 +140,25 @@ if ($nama === '' || $nik === '' || $poli === '' || $input_date === '') {
             color: #0f766e;
             line-height: 1;
         }
-        .queue-label {
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 0.8rem;
-            color: #64748b;
-        }
-        .info-list {
-            padding: 20px 40px;
-        }
-        .info-item {
-            margin-bottom: 15px;
-            border-bottom: 1px solid #f1f5f9;
-            padding-bottom: 5px;
-        }
-        .info-label {
-            font-size: 0.85rem;
-            color: #94a3b8;
-        }
-        .info-value {
-            font-weight: 600;
-            color: #334155;
-            font-size: 1.1rem;
-        }
-        .cut-line {
-            border-top: 2px dashed #cbd5e1;
-            margin: 20px 0;
-            position: relative;
-        }
+        .queue-label { text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; color: #64748b; }
+        .info-list { padding: 20px 40px; }
+        .info-item { margin-bottom: 15px; border-bottom: 1px solid #f1f5f9; padding-bottom: 5px; }
+        .info-label { font-size: 0.85rem; color: #94a3b8; }
+        .info-value { font-weight: 600; color: #334155; font-size: 1.1rem; }
+        .cut-line { border-top: 2px dashed #cbd5e1; margin: 20px 0; position: relative; }
         .cut-line::before, .cut-line::after {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background-color: #e6fffa;
-            border-radius: 50%;
-            top: -12px;
+            content: ''; position: absolute; width: 20px; height: 20px;
+            background-color: #e6fffa; border-radius: 50%; top: -12px;
         }
         .cut-line::before { left: -10px; }
         .cut-line::after { right: -10px; }
     </style>
 </head>
 <body>
-    
     <div class="container">
         <?php if ($showSuccess): ?>
             <div class="ticket-card">
                 <div class="ticket-header">
-                    <img src="logo puskesmas nusantara.png" width="50" class="mb-2 bg-white rounded-circle p-1">
                     <h5 class="fw-bold mb-0">PUSKESMAS NUSANTARA</h5>
                     <small>Bukti Pendaftaran Online</small>
                 </div>
@@ -237,6 +210,5 @@ if ($nama === '' || $nik === '' || $poli === '' || $input_date === '') {
             </div>
         <?php endif; ?>
     </div>
-
 </body>
 </html>
