@@ -31,7 +31,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-5 col-lg-4">
-                <div class="card shadow-lg">
+                <div class="card shadow-lg rounded-5">
                     <div class="card-body p-4">
                         <h3 class="card-title text-center mb-4">Login Admin Puskesmas</h3>
                         
