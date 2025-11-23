@@ -111,7 +111,7 @@ mysqli_close($connect);
             background-color: #0f766e; color: white; border-radius: 50px;
             padding: 12px 30px; width: 100%; font-weight: 600; transition: all 0.3s;
         }
-        .btn-home:hover { background-color: #0d6efd; color: white; transform: translateY(-2px); }
+        .btn-home:hover { background-color: #14b8a6; color: white; transform: translateY(-2px); }
     </style>
 </head>
 <body>

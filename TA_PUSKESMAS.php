@@ -97,7 +97,7 @@
                     memberikan pelayanan kesehatan terbaik untuk Anda dan keluarga, mulai dari upaya menjaga agar tetap
                     sehat, mencegah penyakit, mengobati, hingga pemulihan.</p>
                 <div style="padding-bottom: 6%;">
-                    <a href="pendaftaranPuskesmas.html" class="btn btn-light btn-lg rounded-pill px-5 py-3 me-3">Daftar
+                    <a href="pendaftaranPuskesmas.php" class="btn btn-light btn-lg rounded-pill px-5 py-3 me-3">Daftar
                         Berobat</a>
                     <a href="#layanan" class="btn btn-outline-light btn-lg rounded-pill px-5 py-3">Lihat Layanan</a>
                 </div>
