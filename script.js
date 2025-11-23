@@ -1,14 +1,8 @@
 // Menunggu hingga seluruh konten halaman dimuat sebelum menjalankan skrip
 document.addEventListener('DOMContentLoaded', function () {
 
-    /**
-     * EFEK NAVIGASI SAAT SCROLL
-     * Menambahkan bayangan (shadow) pada navbar ketika halaman di-scroll ke bawah.
-     * Ini memberikan indikasi visual bahwa navbar tidak lagi berada di bagian paling atas halaman.
-     */
     const navbar = document.querySelector('#navbarPuskesmas');
     if (navbar) {
-        // Fungsi untuk menambahkan atau menghapus shadow
         const handleScroll = () => {
             if (window.scrollY > 50) {
                 navbar.classList.add('shadow-lg');
@@ -16,30 +10,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 navbar.classList.remove('shadow-lg');
             }
         };
-
-        // Tambahkan event listener saat halaman di-scroll
         window.addEventListener('scroll', handleScroll);
         
-        // Panggil sekali saat memuat untuk memeriksa posisi awal
         handleScroll(); 
     }
 
-
-    /**
-     * NAVIGASI AKTIF SAAT SCROLL (SCROLLSPY)
-     * Secara otomatis menyorot menu navigasi yang sesuai dengan bagian (section)
-     * yang sedang ditampilkan di layar pada halaman utama.
-     */
     const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
     const sections = document.querySelectorAll('main section');
 
-    // Hanya jalankan jika ada tautan navigasi dan sections di halaman
-    if (navLinks.length > 0 && sections.length > 1) { // Lebih dari 1 section menandakan ini halaman utama
+    if (navLinks.length > 0 && sections.length > 1) { 
         const activateNavLink = () => {
             let currentSectionId = '';
 
             sections.forEach(section => {
-                const sectionTop = section.offsetTop - 100; // Offset agar aktivasi lebih pas
+                const sectionTop = section.offsetTop - 100; 
                 const sectionHeight = section.clientHeight;
                 if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
                     currentSectionId = section.getAttribute('id');
@@ -48,7 +32,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             navLinks.forEach(link => {
                 link.classList.remove('active');
-                // Href di link (cth: '#layanan') harus cocok dengan id section
                 if (link.getAttribute('href').substring(1) === currentSectionId) {
                     link.classList.add('active');
                 }
@@ -56,19 +39,11 @@ document.addEventListener('DOMContentLoaded', function () {
         };
         
         window.addEventListener('scroll', activateNavLink);
-        activateNavLink(); // Panggil saat memuat untuk mengaktifkan link awal
+        activateNavLink(); 
     }
 
-
-    /**
-     * VALIDASI FORMULIR
-     * Mengaktifkan validasi bawaan Bootstrap 5 pada formulir pendaftaran dan pemesanan kamar.
-     * Formulir akan menampilkan umpan balik visual (hijau jika valid, merah jika tidak) setelah pengguna
-     * mencoba mengirimkan data.
-     */
     const forms = document.querySelectorAll('form');
 
-    // Lakukan loop pada setiap formulir dan cegah pengiriman default
     Array.from(forms).forEach(form => {
         form.addEventListener('submit', event => {
             if (!form.checkValidity()) {
@@ -81,14 +56,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 
-    /**
-     * KALKULASI DINAMIS BIAYA KAMAR
-     * Menghitung dan memperbarui ringkasan transaksi secara real-time
-     * berdasarkan pilihan kelas kamar dan status kepemilikan BPJS.
-     */
     const formPemesanan = document.getElementById('formPemesanan');
 
-    // Hanya jalankan skrip ini jika formulir pemesanan ada di halaman
     if (formPemesanan) {
 
         const hargaKamar = {
