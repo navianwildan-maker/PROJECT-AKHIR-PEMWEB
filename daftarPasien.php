@@ -23,7 +23,7 @@ if ($nama === '' || $nik === '' || $poli === '' || $input_date === '') {
         $errorMsg = "Format tanggal tidak valid.";
     } else {
         $tanggal_berobat = $dt->format('Y-m-d');
-        
+
         $day_en = $dt->format('l');
         $map = [
             'Sunday'    => 'Minggu', 'Monday'    => 'Senin',
@@ -50,7 +50,7 @@ if ($nama === '' || $nik === '' || $poli === '' || $input_date === '') {
             
             if ($row = mysqli_fetch_assoc($res)) {
                 $id_jadwal = $row['id_jadwal'];
-                $nama_dokter = $row['nama_dokter']; 
+                $nama_dokter = $row['nama_dokter'];
                 mysqli_stmt_close($stmt);
 
                 mysqli_begin_transaction($connect);
@@ -70,11 +70,14 @@ if ($nama === '' || $nik === '' || $poli === '' || $input_date === '') {
                     $q_antrian = mysqli_query($connect, "SELECT COUNT(*) as total FROM kunjungan WHERE id_jadwal = '$id_jadwal' AND tanggal_kunjungan = '$tanggal_berobat'");
                     $r_antrian = mysqli_fetch_assoc($q_antrian);
                     $nomor_antrian = $r_antrian['total'] + 1;
-                    $ins2 = mysqli_prepare($connect, "INSERT INTO kunjungan (id_pasien, id_jadwal, poli_tujuan, tanggal_kunjungan, status) VALUES (?, ?, ?, ?, ?)");
-
-                    mysqli_stmt_bind_param($ins2, 'iisss', $id_pasien, $id_jadwal, $poli, $tanggal_berobat, $status);
+                    $ins2 = mysqli_prepare($connect, "INSERT INTO kunjungan (id_pasien, id_jadwal, poli_tujuan, tanggal_kunjungan, nomor_antrian, status) VALUES (?, ?, ?, ?, ?, ?)");
                     
-                    mysqli_stmt_execute($ins2);
+
+                    mysqli_stmt_bind_param($ins2, 'iissis', $id_pasien, $id_jadwal, $poli, $tanggal_berobat, $nomor_antrian, $status);
+                    
+                    if (!mysqli_stmt_execute($ins2)) {
+                         throw new Exception("Gagal insert kunjungan: " . mysqli_stmt_error($ins2));
+                    }
                     mysqli_stmt_close($ins2);
 
                     mysqli_commit($connect);
