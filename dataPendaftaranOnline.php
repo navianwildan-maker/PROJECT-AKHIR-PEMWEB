@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,16 +9,20 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         .action-buttons {
-           display: flex;
-           gap: .4rem;
-           align-items: center;
-           flex-wrap: nowrap; /* jangan wrap ke baris baru */
-       }
-       .action-buttons .btn {
-           white-space: nowrap; /* teks tombol tidak terpotong ke baris baru */
-       }
+            display: flex;
+            gap: .4rem;
+            align-items: center;
+            flex-wrap: nowrap;
+            /* jangan wrap ke baris baru */
+        }
+
+        .action-buttons .btn {
+            white-space: nowrap;
+            /* teks tombol tidak terpotong ke baris baru */
+        }
     </style>
 </head>
+
 <body style="padding-top: 100px;">
     <?php
     session_start();
@@ -52,7 +57,7 @@
 
     <div class="container mt-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2>Data Pendaftaran Pasien</h2> 
+            <h2>Data Pendaftaran Pasien</h2>
         </div>
 
         <div class="card shadow-sm">
@@ -80,22 +85,24 @@
                         $result = mysqli_query($connect, $query);
                         while ($row = mysqli_fetch_array($result)) {
                         ?>
-                        <tbody>
-                            <tr>
-                                <th><?= $row['id_kunjungan'] ?></th>
-                                <td><?= $row['nomor_antrian'] ?></td>
-                                <td><?= $row['nama'] ?></td>
-                                <td><?= $row['poli_tujuan'] ?></td>
-                                <td><?= $row['nama'] ?></td>
-                                <td><?= $row['tanggal_kunjungan'] ?></td>
-                                <td><?= $row['status'] ?></td>
-                                <td>
-                                    <div class="action-buttons" style="display: flex; gap: 0.4rem;">
-                                        <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-square"></i> Edit</button>
-                                        <a href="deleteDataPasien.php?id=<?= $row['id_kunjungan'] ?>" class="btn btn-danger btn-sm ms-1"><i class="bi bi-trash"></i> Hapus</a>
-                                    </div>
-                                </td>
-                            </tr>
+                            <tbody>
+                                <tr>
+                                    <th><?= $row['id_kunjungan'] ?></th>
+                                    <td><?= $row['nomor_antrian'] ?></td>
+                                    <td><?= $row['nama'] ?></td>
+                                    <td><?= $row['poli_tujuan'] ?></td>
+                                    <td><?= $row['nama'] ?></td>
+                                    <td><?= $row['tanggal_kunjungan'] ?></td>
+                                    <td><?= $row['status'] ?></td>
+                                    <td>
+                                        <div class="action-buttons" style="display: flex; gap: 0.4rem;">
+                                            <a href="editDataPasien.php?id=<?= $row['id_kunjungan'] ?>" class="btn btn-warning btn-sm">
+                                                <i class="bi bi-pencil-square"></i> Edit
+                                            </a>
+                                            <a href="deleteDataPasien.php?id=<?= $row['id_kunjungan'] ?>" class="btn btn-danger btn-sm ms-1"><i class="bi bi-trash"></i> Hapus</a>
+                                        </div>
+                                    </td>
+                                </tr>
                             <?php } ?>
                             </tbody>
                     </table>
@@ -106,4 +113,5 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
