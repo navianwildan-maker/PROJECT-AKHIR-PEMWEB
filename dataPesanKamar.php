@@ -59,23 +59,31 @@
                                 <th scope="col">Aksi</th>
                             </tr>
                         </thead>
-                        <?php
-                        include 'connection.php';
-                        $result = mysqli_query($connect, "SELECT * FROM pesankamar");
-                        while ($row = mysqli_fetch_assoc($result)) {
-                        ?>
                         <tbody>
+                            <?php
+                            include 'connection.php';
+                            $result = mysqli_query($connect, "SELECT * FROM pesankamar");
+                            
+                            $no = 1; 
+                            
+                            while ($row = mysqli_fetch_assoc($result)) {
+                            ?>
                             <tr>
-                                <th scope="row">101</th>
-                                <td>Kelas 1</td>
-                                <td><span class="badge bg-danger">Terisi</span></td>
-                                <td>Budiono Siregar</td>
-                                <td>2025-10-25</td>
+                                <th scope="row"><?= $no++ ?></th> <td><?= $row['kelas'] ?></td>
                                 <td>
-                                    <button class="btn btn-primary btn-sm"><i class="bi bi-eye"></i> Detail</button>
+                                    <span class="badge <?= ($row['status'] == 'Terisi') ? 'bg-danger' : 'bg-success' ?>">
+                                        <?= $row['status'] ?>
+                                    </span>
+                                </td>
+                                <td><?= $row['nama'] ?></td>
+                                <td><?= $row['tanggal_masuk'] ?></td>
+                                <td>
+                                    <a href="editDataKamar.php?id=<?= $row['id'] ?>" class="btn btn-warning btn-sm">
+                                        <i class="bi bi-pencil-square"></i> Edit
+                                    </a>
                                 </td>
                             </tr>
-                        <?php } ?>
+                            <?php } ?>
                         </tbody>
                     </table>
                 </div>
