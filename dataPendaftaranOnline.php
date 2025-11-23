@@ -70,28 +70,38 @@
                                 <th>No Antri</th>
                                 <th>Nama Pasien</th>
                                 <th>Poli Tujuan</th>
-                                <th>Dokter </th>
+                                <th>Dokter</th>
                                 <th>Tanggal Berobat</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
-                        <?php
-                        include 'connection.php';
-                        $query = "SELECT k.id_kunjungan, k.nomor_antrian, p.nama, k.poli_tujuan, d.nama, k.tanggal_kunjungan, k.status 
-                                  FROM kunjungan k INNER JOIN jadwal_dokter j ON j.id_jadwal = k.id_jadwal
-                                  INNER JOIN dokter d ON j.id_dokter = d.id_dokter
-                                  INNER JOIN pasien p ON k.id_pasien = p.id_pasien";
-                        $result = mysqli_query($connect, $query);
-                        while ($row = mysqli_fetch_array($result)) {
-                        ?>
-                            <tbody>
+                        <tbody> <?php
+                                include 'connection.php';
+
+                            $query = "SELECT k.id_kunjungan, k.nomor_antrian, 
+                             p.nama AS nama_pasien, 
+                             k.poli_tujuan, 
+                             d.nama AS nama_dokter, 
+                             k.tanggal_kunjungan, k.status 
+                            FROM kunjungan k 
+                            INNER JOIN jadwal_dokter j ON j.id_jadwal = k.id_jadwal
+                            INNER JOIN dokter d ON j.id_dokter = d.id_dokter
+                            INNER JOIN pasien p ON k.id_pasien = p.id_pasien";
+
+                                $result = mysqli_query($connect, $query);
+                                while ($row = mysqli_fetch_array($result)) {
+                                ?>
                                 <tr>
                                     <th><?= $row['id_kunjungan'] ?></th>
                                     <td><?= $row['nomor_antrian'] ?></td>
-                                    <td><?= $row['nama'] ?></td>
+
+                                    <td><?= $row['nama_pasien'] ?></td>
+
                                     <td><?= $row['poli_tujuan'] ?></td>
-                                    <td><?= $row['nama'] ?></td>
+
+                                    <td><?= $row['nama_dokter'] ?></td>
+
                                     <td><?= $row['tanggal_kunjungan'] ?></td>
                                     <td><?= $row['status'] ?></td>
                                     <td>
@@ -99,12 +109,12 @@
                                             <a href="editDataPasien.php?id=<?= $row['id_kunjungan'] ?>" class="btn btn-warning btn-sm">
                                                 <i class="bi bi-pencil-square"></i> Edit
                                             </a>
-                                            <a href="deleteDataPasien.php?id=<?= $row['id_kunjungan'] ?>" class="btn btn-danger btn-sm ms-1"><i class="bi bi-trash"></i> Hapus</a>
+                                            <a href="deleteDataPasien.php?id=<?= $row['id_kunjungan'] ?>" class="btn btn-danger btn-sm ms-1" onclick="return confirm('Yakin ingin menghapus data ini?')"><i class="bi bi-trash"></i> Hapus</a>
                                         </div>
                                     </td>
                                 </tr>
                             <?php } ?>
-                            </tbody>
+                        </tbody>
                     </table>
                 </div>
             </div>
