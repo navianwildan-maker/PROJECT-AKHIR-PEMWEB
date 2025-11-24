@@ -8,7 +8,7 @@ if ($id === null) {
 }
 $query = "DELETE FROM pesankamar WHERE id = $id";
 $result  = mysqli_query($connect, $query);
-if ($result && $deletePasien) {
+if (mysqli_affected_rows($connect) > 0) {
     echo "<script>alert('Data Kamar berhasil dihapus!'); window.location.href='dataPesanKamar.php';</script>";
 } else {
     echo "<script>alert('Data Kamar Tidak Ditemukan'); window.location.href='dataPesanKamar.php';</script>";

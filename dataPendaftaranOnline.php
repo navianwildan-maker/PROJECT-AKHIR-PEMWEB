@@ -66,7 +66,7 @@
                     <table class="table table-striped table-hover table-bordered">
                         <thead class="table-success">
                             <tr>
-                                <th>ID Kunjungan</th>
+                                <!-- <th>ID Kunjungan</th> -->
                                 <th>No Antri</th>
                                 <th>Nama Pasien</th>
                                 <th>Poli Tujuan</th>
@@ -93,7 +93,7 @@
                                 while ($row = mysqli_fetch_array($result)) {
                                 ?>
                                 <tr>
-                                    <th><?= $row['id_kunjungan'] ?></th>
+                                    <!-- <th><?= $row['id_kunjungan'] ?></th> -->
                                     <td><?= $row['nomor_antrian'] ?></td>
 
                                     <td><?= $row['nama_pasien'] ?></td>
