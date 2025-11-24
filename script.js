@@ -68,18 +68,23 @@ document.addEventListener('DOMContentLoaded', function () {
         };
         const BIAYA_ADMIN = 5500;
 
-        const poliSelect = document.getElementById('poli');
+        const kamarSelect = document.getElementById('kamar');
         const bpjsInput = document.getElementById('bpjs');
         const biayaKamarDisplay = document.getElementById('biayaKamarDisplay');
         const biayaAdminDisplay = document.getElementById('biayaAdminDisplay');
         const totalTagihanDisplay = document.getElementById('totalTagihanDisplay');
+
+        if (!kamarSelect || !bpjsInput || !biayaKamarDisplay || !biayaAdminDisplay || !totalTagihanDisplay) {
+            console.error('Elemen form pemesanan tidak ditemukan.');
+            return;
+        }
 
         const formatRupiah = (angka) => {
             return 'Rp' + new Intl.NumberFormat('id-ID').format(angka);
         }
 
         const updateRingkasan = () => {
-            const selectedKamar = poliSelect.value;
+            const selectedKamar = kamarSelect.value;
             const hasBPJS = bpjsInput.value.trim() !== '';
 
             let biayaKamar = hargaKamar[selectedKamar] || 0;
@@ -99,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function () {
             totalTagihanDisplay.textContent = formatRupiah(totalTagihan);
         };
 
-        poliSelect.addEventListener('change', updateRingkasan);
+        kamarSelect.addEventListener('change', updateRingkasan);
         bpjsInput.addEventListener('input', updateRingkasan);
 
         updateRingkasan();
