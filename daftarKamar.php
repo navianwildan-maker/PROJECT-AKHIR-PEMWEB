@@ -20,6 +20,11 @@ if(empty($nama) || empty($kamar) || empty($tanggal)) {
     elseif($kamar == "Kelas 2") $harga = 300000;
     elseif($kamar == "Kelas 3") $harga = 150000;
     elseif($kamar == "VIP/VVIP") $harga = 1000000;
+
+    if (!empty($bpjs) && ($kamar === "Kelas 2" || $kamar === "Kelas 3")) {
+        $harga = 0;
+    } 
+    
     $total = $harga + 5500; 
     $id_pasien = 0;
     $cekPasien = mysqli_query($connect, "SELECT id_pasien FROM pasien WHERE nik = '$nik'");
