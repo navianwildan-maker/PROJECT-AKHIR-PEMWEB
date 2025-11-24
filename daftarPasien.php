@@ -59,8 +59,14 @@ if ($nama === '' || $nik === '' || $poli === '' || $input_date === '') {
                         $p = mysqli_fetch_assoc($cek_pasien);
                         $id_pasien = $p['id_pasien'];
                     } else {
-                        $ins1 = mysqli_prepare($connect, "INSERT INTO pasien (nama, nik, bpjs) VALUES (?, ?, ?)");
-                        mysqli_stmt_bind_param($ins1, 'sss', $nama, $nik, $bpjs);
+                       if ($bpjs === '') {
+                            // simpan NULL jika kosong sehingga tidak memicu unique duplicate pada ''
+                            $ins1 = mysqli_prepare($connect, "INSERT INTO pasien (nama, nik, bpjs) VALUES (?, ?, NULL)");
+                            mysqli_stmt_bind_param($ins1, 'ss', $nama, $nik);
+                        } else {
+                            $ins1 = mysqli_prepare($connect, "INSERT INTO pasien (nama, nik, bpjs) VALUES (?, ?, ?)");
+                            mysqli_stmt_bind_param($ins1, 'sss', $nama, $nik, $bpjs);
+                        }
                         if(!mysqli_stmt_execute($ins1)){
                              throw new Exception("Gagal insert pasien: " . mysqli_stmt_error($ins1));
                         }

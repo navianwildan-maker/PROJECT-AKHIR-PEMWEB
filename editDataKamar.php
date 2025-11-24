@@ -20,12 +20,20 @@
     $id = $_GET['id'];
 
     if (isset($_POST['update'])) {
+        $id_kamar = $_POST['id_kamar'];
         $nama_pasien = $_POST['nama'];
         $kelas = $_POST['kelas'];
         $status = $_POST['status'];
         $tanggal_masuk = $_POST['tanggal_masuk'];
 
+        $check = mysqli_query($connect, "SELECT * FROM pesankamar WHERE id_kamar = '$id_kamar' AND id != '$id'");
+        if (mysqli_num_rows($check) > 0) {
+            echo "<script>alert('Gagal update: Nomor Kamar sudah digunakan oleh pasien lain.'); window.location.href='editDataKamar.php?id=$id';</script>";
+            exit;
+        }
+
         $query_update = "UPDATE pesankamar SET 
+                         id_kamar = '$id_kamar',
                          nama = '$nama_pasien', 
                          kelas = '$kelas', 
                          status = '$status',
@@ -72,11 +80,33 @@
                     </div>
                     <div class="card-body">
                         <form method="POST">
+
+                        <div class="mb-3 row">
+                                <label class="col-sm-3 col-form-label">Nomor Kamar</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="id_kamar" value="<?= $data['id_kamar'] ?>" required>
+                                </div>
+                            </div>
+
                             
                             <div class="mb-3 row">
                                 <label class="col-sm-3 col-form-label">Nama Pasien</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control" name="nama" value="<?= $data['nama'] ?>" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label class="col-sm-3 col-form-label">NIK</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="nik" value="<?= $data['nik'] ?>" required readonly>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label class="col-sm-3 col-form-label">BPJS</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="bpjs" value="<?= $data['bpjs'] ?>" required readonly>
                                 </div>
                             </div>
 

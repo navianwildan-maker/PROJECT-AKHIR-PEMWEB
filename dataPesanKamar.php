@@ -63,13 +63,13 @@
                             <?php
                             include 'connection.php';
                             $result = mysqli_query($connect, "SELECT * FROM pesankamar");
-                            
-                            $no = 1; 
+                    
                             
                             while ($row = mysqli_fetch_assoc($result)) {
                             ?>
                             <tr>
-                                <th scope="row"><?= $no++ ?></th> <td><?= $row['kelas'] ?></td>
+                                <th scope="row"><?= $row['id_kamar'] ?></th> 
+                                <td><?= $row['kelas'] ?></td>
                                 <td>
                                     <span class="badge <?= ($row['status'] == 'Terisi') ? 'bg-danger' : 'bg-success' ?>">
                                         <?= $row['status'] ?>
@@ -80,6 +80,9 @@
                                 <td>
                                     <a href="editDataKamar.php?id=<?= $row['id'] ?>" class="btn btn-warning btn-sm">
                                         <i class="bi bi-pencil-square"></i> Edit
+                                    </a>
+                                    <a href="deleteDataKamar.php?id=<?= $row['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                        <i class="bi bi-trash"></i> Hapus
                                     </a>
                                 </td>
                             </tr>
