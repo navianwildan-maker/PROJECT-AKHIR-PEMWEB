@@ -11,7 +11,14 @@ $nik = trim($_POST['nik'] ?? '');
 $bpjs = trim($_POST['bpjs'] ?? '');
 $poli = trim($_POST['poli'] ?? '');
 $input_date = trim($_POST['tanggal_berobat'] ?? '');
-$status = 'Menunggu';
+$status = trim($_POST['status'] ?? 'Rutin');
+
+$status_triage = 3;
+if ($status == 'Urgent') {
+        $status_triage = 2;
+    } elseif ($status == 'Emergency') {
+        $status_triage = 1;
+    }
 
 if ($nama === '' || $nik === '' || $poli === '' || $input_date === '') {
     $showError = true;
@@ -60,7 +67,6 @@ if ($nama === '' || $nik === '' || $poli === '' || $input_date === '') {
                         $id_pasien = $p['id_pasien'];
                     } else {
                        if ($bpjs === '') {
-                            // simpan NULL jika kosong sehingga tidak memicu unique duplicate pada ''
                             $ins1 = mysqli_prepare($connect, "INSERT INTO pasien (nama, nik, bpjs) VALUES (?, ?, NULL)");
                             mysqli_stmt_bind_param($ins1, 'ss', $nama, $nik);
                         } else {
@@ -81,7 +87,7 @@ if ($nama === '' || $nik === '' || $poli === '' || $input_date === '') {
                     $nomor_antrian = $r_antrian['total'] + 1;
                     
                     $ins2 = mysqli_prepare($connect, "INSERT INTO kunjungan (id_pasien, id_jadwal, poli_tujuan, tanggal_kunjungan, nomor_antrian, status) VALUES (?, ?, ?, ?, ?, ?)");
-                    mysqli_stmt_bind_param($ins2, 'iissis', $id_pasien, $id_jadwal, $poli, $tanggal_berobat, $nomor_antrian, $status);
+                    mysqli_stmt_bind_param($ins2, 'iissis', $id_pasien, $id_jadwal, $poli, $tanggal_berobat, $nomor_antrian, $status_triage);
                     
                     if (!mysqli_stmt_execute($ins2)) {
                          throw new Exception("Gagal insert kunjungan: " . mysqli_stmt_error($ins2));

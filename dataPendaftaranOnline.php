@@ -83,11 +83,18 @@
                              p.nama AS nama_pasien, 
                              k.poli_tujuan, 
                              d.nama AS nama_dokter, 
-                             k.tanggal_kunjungan, k.status 
+                             k.tanggal_kunjungan,
+                             CASE k.status
+                                WHEN 1 THEN 'DARURAT'
+                                WHEN 2 THEN 'SEGERA'
+                                WHEN 3 THEN 'RUTIN'
+                                ELSE 'TIDAK DIKETAHUI'
+                             END AS status
                             FROM kunjungan k 
                             INNER JOIN jadwal_dokter j ON j.id_jadwal = k.id_jadwal
                             INNER JOIN dokter d ON j.id_dokter = d.id_dokter
-                            INNER JOIN pasien p ON k.id_pasien = p.id_pasien";
+                            INNER JOIN pasien p ON k.id_pasien = p.id_pasien
+                            ORDER BY k.status";
 
                                 $result = mysqli_query($connect, $query);
                                 while ($row = mysqli_fetch_array($result)) {

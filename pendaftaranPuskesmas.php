@@ -165,6 +165,25 @@
                                         class="form-control form-control-lg"
                                         id="tanggal" name="tanggal_berobat" required>
                                 </div>
+
+                                <div class="col-12">
+                                    <label class="form-label">Prioritas</label>
+                                        <div class="d-flex gap-4 align-items-center flex-wrap">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" id="emergencyDarurat" name="status" value="Emergency">
+                                                <label class="form-check-label" for="emergencyDarurat">Darurat</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" id="emergencyUrgent" name="status" value="Urgent">
+                                                <label class="form-check-label" for="emergencyUrgent">Segera</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" id="emergencyRutin" name="status" value="Rutin" checked>
+                                                <label class="form-check-label" for="emergencyRutin">Rutin</label>
+                                            </div>
+                                        </div>
+                                </div>
+
                                 <div class="col-12 text-center mt-4">
                                     <button type="submit"
                                         class="btn" style="background-color: #0f766e; border-color: #0f766e; color: white; border-radius: 100px;";>Daftar
