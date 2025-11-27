@@ -22,11 +22,9 @@
     if (isset($_POST['update'])) {
         $poli_tujuan = $_POST['poli_tujuan'];
         $tanggal_kunjungan = $_POST['tanggal_kunjungan'];
-        $status = $_POST['status'];
         $query_update = "UPDATE kunjungan SET 
                          poli_tujuan = '$poli_tujuan', 
-                         tanggal_kunjungan = '$tanggal_kunjungan', 
-                         status = '$status' 
+                         tanggal_kunjungan = '$tanggal_kunjungan'
                          WHERE id_kunjungan = '$id_kunjungan'";
 
         if (mysqli_query($connect, $query_update)) {
@@ -113,18 +111,6 @@
                                 <label class="col-sm-3 col-form-label">Tanggal Berobat</label>
                                 <div class="col-sm-9">
                                     <input type="date" class="form-control" name="tanggal_kunjungan" value="<?= $data['tanggal_kunjungan'] ?>" required>
-                                </div>
-                            </div>
-
-                            <div class="mb-3 row">
-                                <label class="col-sm-3 col-form-label">Status</label>
-                                <div class="col-sm-9">
-                                    <select class="form-select" name="status" required>
-                                        <option value="Menunggu" <?= ($data['status'] == 'Menunggu') ? 'selected' : '' ?>>Menunggu</option>
-                                        <option value="Diperiksa" <?= ($data['status'] == 'Diperiksa') ? 'selected' : '' ?>>Diperiksa</option>
-                                        <option value="Selesai" <?= ($data['status'] == 'Selesai') ? 'selected' : '' ?>>Selesai</option>
-                                        <option value="Batal" <?= ($data['status'] == 'Batal') ? 'selected' : '' ?>>Batal</option>
-                                    </select>
                                 </div>
                             </div>
 
