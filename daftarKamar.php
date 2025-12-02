@@ -8,18 +8,31 @@ $kamar = trim($_POST['kamar'] ?? '');
 $tanggal = trim($_POST['tanggal'] ?? '');
 $status = "Booking"; 
 
+$ambil = mysqli_query($connect, "SELECT * FROM kelas_kamar WHERE nama_kelas = '$kamar'");
+$data = mysqli_fetch_array($ambil);
+
 $isSuccess = false;
 $errorMessage = "";
 
+if ($bpjs === '') {
+    $stmt = mysqli_prepare($connect, "SELECT * FROM pasien WHERE nik = ?");
+    mysqli_stmt_bind_param($stmt, 's', $nik);
+} else {
+    $stmt = mysqli_prepare($connect, "SELECT * FROM pasien WHERE nik = ? AND bpjs = ?");
+    mysqli_stmt_bind_param($stmt, 'ss', $nik, $bpjs);
+}
+mysqli_stmt_execute($stmt);
+$cek = mysqli_stmt_get_result($stmt);
+
 if(empty($nama) || empty($kamar) || empty($tanggal)) {
     $errorMessage = "Data tidak lengkap.";
+} else if ($cek === false) {
+    $errorMessage = "Query Error: " . mysqli_error($connect);
+} else if (mysqli_num_rows($cek) == 0) {
+    $errorMessage = "Gagal: Pasien belum terdaftar. Silahkan daftar pasien terlebih dahulu.";
 } else {
     // Hitung harga untuk tampilan (TIDAK DISIMPAN KE DB KARENA KOLOM TIDAK ADA)
-    $harga = 0;
-    if($kamar == "Kelas 1") $harga = 500000;
-    elseif($kamar == "Kelas 2") $harga = 300000;
-    elseif($kamar == "Kelas 3") $harga = 150000;
-    elseif($kamar == "VIP/VVIP") $harga = 1000000;
+    $harga = $data['harga'];
 
     if (!empty($bpjs) && ($kamar === "Kelas 2" || $kamar === "Kelas 3")) {
         $harga = 0;

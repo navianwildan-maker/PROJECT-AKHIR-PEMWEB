@@ -45,55 +45,89 @@
             <h2>Data Ketersediaan Kamar</h2>
         </div>
 
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover table-bordered">
-                        <thead class="table-success">
+<?php
+include 'connection.php';
+$classes = ['VIP', 'Kelas 1', 'Kelas 2', 'Kelas 3'];
+
+foreach ($classes as $className) {
+    $sql = "SELECT kf.id_kamar, kf.nomor_kamar, kk.nama_kelas AS kelas, kf.status_kamar AS status,
+                   p.nama, pk.tanggal_masuk, pk.id_pasien
+            FROM kamar_fisik kf
+            JOIN kelas_kamar kk ON kf.id_kelas = kk.id_kelas
+            LEFT JOIN pesankamar pk ON kf.id_kamar = pk.id_kamar
+            LEFT JOIN pasien p ON pk.id_pasien = p.id_pasien
+            WHERE kk.nama_kelas = ?
+            ORDER BY kf.nomor_kamar ASC";
+    $stmt = mysqli_prepare($connect, $sql);
+    mysqli_stmt_bind_param($stmt, 's', $className);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    ?>
+    <div class="card shadow-sm mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><?= htmlspecialchars($className) ?></h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover table-bordered mb-0">
+                    <thead class="table-success">
+                        <tr>
+                            <th>No Kamar</th>
+                            <th>Kelas</th>
+                            <th>Status</th>
+                            <th>Nama Penghuni</th>
+                            <th>Tanggal Masuk</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php while ($row = mysqli_fetch_assoc($result)) {
+                       
+                        if (empty($row['id_pasien'])) { ?>
                             <tr>
-                                <th scope="col">No Kamar</th>
-                                <th scope="col">Kelas</th>
-                                <th scope="col">Status</th>
-                                <th scope="col">Nama Penghuni</th>
-                                <th scope="col">Tanggal Masuk</th>
-                                <th scope="col">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            include 'connection.php';
-                            $result = mysqli_query($connect, "SELECT * FROM pesankamar");
-                    
-                            
-                            while ($row = mysqli_fetch_assoc($result)) {
-                            ?>
-                            <tr>
-                                <th scope="row"><?= $row['id_kamar'] ?></th> 
-                                <td><?= $row['kelas'] ?></td>
+                                <td><?= htmlspecialchars($row['nomor_kamar']) ?></td>
+                                <td><?= htmlspecialchars($row['kelas']) ?></td>
                                 <td>
-                                    <span class="badge <?= ($row['status'] == 'Terisi') ? 'bg-danger' : 'bg-success' ?>">
-                                        <?= $row['status'] ?>
+                                    <span class="badge <?= ($row['status'] === 'Terisi') ? 'bg-danger' : 'bg-success' ?>">
+                                        <?= htmlspecialchars($row['status']) ?>
                                     </span>
                                 </td>
-                                <td><?= $row['nama'] ?></td>
-                                <td><?= $row['tanggal_masuk'] ?></td>
+                                <!-- gabungkan kolom sisanya menjadi satu kolom informatif -->
+                                <td colspan="3" class="text-muted" style="text-align: center;">Kamar kosong</td>
+                            </tr>
+                        <?php } else { ?>
+                            <tr>
+                                <td><?= htmlspecialchars($row['nomor_kamar']) ?></td>
+                                <td><?= htmlspecialchars($row['kelas']) ?></td>
                                 <td>
-                                    <a href="editDataKamar.php?id=<?= $row['id'] ?>" class="btn btn-warning btn-sm">
+                                    <span class="badge <?= ($row['status'] === 'Terisi') ? 'bg-danger' : 'bg-success' ?>">
+                                        <?= htmlspecialchars($row['status']) ?>
+                                    </span>
+                                </td>
+                                <td><?= htmlspecialchars($row['nama']) ?></td>
+                                <td><?= htmlspecialchars($row['tanggal_masuk']) ?></td>
+                                <td>
+                                    <a href="editDataKamar.php?id=<?= (int)$row['id_kamar'] ?>" class="btn btn-warning btn-sm">
                                         <i class="bi bi-pencil-square"></i> Edit
                                     </a>
-                                    <a href="deleteDataKamar.php?id=<?= $row['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                    <a href="deleteDataKamar.php?id=<?= (int)$row['id_kamar'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
                                         <i class="bi bi-trash"></i> Hapus
                                     </a>
                                 </td>
                             </tr>
-                            <?php } ?>
-                        </tbody>
-                    </table>
-                </div>
+                        <?php }
+                    } ?>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
+    <?php
+    mysqli_stmt_close($stmt); 
+}
+?>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

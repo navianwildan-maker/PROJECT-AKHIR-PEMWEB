@@ -33,7 +33,7 @@
             echo "<script>alert('Gagal mengupdate data: " . mysqli_error($connect) . "');</script>";
         }
     }
-    $query = "SELECT k.*, p.nama AS nama_pasien, d.nama AS nama_dokter 
+    $query = "SELECT k.*, p.nama AS nama_pasien, d.nama AS nama_dokter, p.nik, p.bpjs
               FROM kunjungan k 
               INNER JOIN jadwal_dokter j ON j.id_jadwal = k.id_jadwal
               INNER JOIN dokter d ON j.id_dokter = d.id_dokter
@@ -83,6 +83,18 @@
                                 <label class="col-sm-3 col-form-label">Nama Pasien</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control" value="<?= $data['nama_pasien'] ?>" disabled>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label class="col-sm-3 col-form-label">NIK</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" value="<?= $data['nik'] ?>" disabled>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label class="col-sm-3 col-form-label">BPJS</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" value="<?= $data['bpjs'] ?>" disabled>
                                 </div>
                             </div>
                             <div class="mb-3 row">
