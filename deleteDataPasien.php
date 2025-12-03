@@ -3,6 +3,11 @@ include 'connection.php';
 session_start();
 
 $id = $_GET['id'];
+$cekKamar = mysqli_query($connect, "SELECT id_kamar FROM pesankamar WHERE id = $id");
+if (mysqli_num_rows($cekKamar) > 0) {
+    echo "<script>alert('Data Pasien tidak dapat dihapus karena masih memiliki kamar yang dipesan.'); window.location.href='dataPesanKamar.php';</script>";
+    exit;
+}
 $pasien = mysqli_query($connect, "SELECT id_pasien from kunjungan WHERE id_kunjungan = $id");
 $query = "DELETE FROM kunjungan WHERE id_kunjungan = $id";
 $result  = mysqli_query($connect, $query);

@@ -2,72 +2,116 @@
 include 'connection.php';
 
 $nama = trim($_POST['nama'] ?? '');
-$nik = trim($_POST['nik'] ?? '');
-$bpjs = trim($_POST['bpjs'] ?? '');
+$nik   = trim($_POST['nik'] ?? '');
+$bpjs  = trim($_POST['bpjs'] ?? '');
 $kamar = trim($_POST['kamar'] ?? '');
 $tanggal = trim($_POST['tanggal'] ?? '');
-$status = "Booking"; 
-
-$ambil = mysqli_query($connect, "SELECT * FROM kelas_kamar WHERE nama_kelas = '$kamar'");
-$data = mysqli_fetch_array($ambil);
-
 $isSuccess = false;
 $errorMessage = "";
 
-if ($bpjs === '') {
-    $stmt = mysqli_prepare($connect, "SELECT * FROM pasien WHERE nik = ?");
-    mysqli_stmt_bind_param($stmt, 's', $nik);
-} else {
-    $stmt = mysqli_prepare($connect, "SELECT * FROM pasien WHERE nik = ? AND bpjs = ?");
-    mysqli_stmt_bind_param($stmt, 'ss', $nik, $bpjs);
-}
-mysqli_stmt_execute($stmt);
-$cek = mysqli_stmt_get_result($stmt);
-
-if(empty($nama) || empty($kamar) || empty($tanggal)) {
+// basic validation
+if (empty($nama) || empty($nik) || empty($kamar) || empty($tanggal)) {
     $errorMessage = "Data tidak lengkap.";
-} else if ($cek === false) {
-    $errorMessage = "Query Error: " . mysqli_error($connect);
-} else if (mysqli_num_rows($cek) == 0) {
-    $errorMessage = "Gagal: Pasien belum terdaftar. Silahkan daftar pasien terlebih dahulu.";
 } else {
-    // Hitung harga untuk tampilan (TIDAK DISIMPAN KE DB KARENA KOLOM TIDAK ADA)
-    $harga = $data['harga'];
-
-    if (!empty($bpjs) && ($kamar === "Kelas 2" || $kamar === "Kelas 3")) {
-        $harga = 0;
-    } 
-    
-    $total = $harga + 5500; 
-    $id_pasien = 0;
-    $cekPasien = mysqli_query($connect, "SELECT id_pasien FROM pasien WHERE nik = '$nik'");
-    if($row = mysqli_fetch_assoc($cekPasien)){
-        $id_pasien = $row['id_pasien'];
+    // 1) cari pasien (prepared)
+    if ($bpjs === '') {
+        $stmt = mysqli_prepare($connect, "SELECT id_pasien FROM pasien WHERE nik = ?");
+        mysqli_stmt_bind_param($stmt, 's', $nik);
+    } else {
+        $stmt = mysqli_prepare($connect, "SELECT id_pasien FROM pasien WHERE nik = ? AND bpjs = ?");
+        mysqli_stmt_bind_param($stmt, 'ss', $nik, $bpjs);
     }
+    if (! $stmt) {
+        $errorMessage = "Query Error: " . mysqli_error($connect);
+    } else {
+        mysqli_stmt_execute($stmt);
+        $res = mysqli_stmt_get_result($stmt);
+        mysqli_stmt_close($stmt);
 
-    $sql = "INSERT INTO pesankamar (id_pasien, nama, nik, bpjs, kelas, tanggal_masuk, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    
-    $stmt = mysqli_prepare($connect, $sql);
-    
-    if ($stmt) {
-        mysqli_stmt_bind_param($stmt, "issssss", $id_pasien, $nama, $nik, $bpjs, $kamar, $tanggal, $status);
-        
-        try {
-            if (mysqli_stmt_execute($stmt)) {
-                $isSuccess = true;
+        if ($res === false) {
+            $errorMessage = "Query Error: " . mysqli_error($connect);
+        } else if (mysqli_num_rows($res) == 0) {
+            $errorMessage = "Gagal: Pasien belum terdaftar. Silahkan daftar pasien terlebih dahulu.";
+        } else {
+            $row = mysqli_fetch_assoc($res);
+            $id_pasien = (int)$row['id_pasien'];
+
+            // 2) ambil id_kelas dan harga dari kelas_kamar
+            $stmt = mysqli_prepare($connect, "SELECT id_kelas, tarif FROM kelas_kamar WHERE nama_kelas = ?");
+            if (! $stmt) {
+                $errorMessage = "Query Error: " . mysqli_error($connect);
             } else {
-                if(mysqli_errno($connect) == 1062){
-                     $errorMessage = "Gagal: Pasien dengan NIK/BPJS ini sudah memesan kamar (Data Duplikat).";
+                mysqli_stmt_bind_param($stmt, 's', $kamar);
+                mysqli_stmt_execute($stmt);
+                $res2 = mysqli_stmt_get_result($stmt);
+                mysqli_stmt_close($stmt);
+
+                if ($res2 === false || mysqli_num_rows($res2) == 0) {
+                    $errorMessage = "Kelas kamar tidak ditemukan.";
                 } else {
-                     $errorMessage = "Gagal menyimpan data: " . mysqli_stmt_error($stmt);
+                    $kelasRow = mysqli_fetch_assoc($res2);
+                    $id_kelas = (int)$kelasRow['id_kelas'];
+                    $harga = (int)$kelasRow['tarif'];
+
+                    // business rule: BPJS covers Kelas 2 & 3
+                    if (!empty($bpjs) && ($kamar === "Kelas 2" || $kamar === "Kelas 3")) {
+                        $harga = 0;
+                    }
+
+                    // total harga (jangan ubah perhitungan ini)
+                    $total = $harga + 5500;
+
+                    // 3) pilih kamar fisik yang kosong untuk id_kelas ini
+                    $stmt = mysqli_prepare($connect, "SELECT id_kamar FROM kamar_fisik WHERE id_kelas = ? AND status_kamar = 'Tersedia' LIMIT 1");
+                    if (! $stmt) {
+                        $errorMessage = "Query Error: " . mysqli_error($connect);
+                    } else {
+                        mysqli_stmt_bind_param($stmt, 'i', $id_kelas);
+                        mysqli_stmt_execute($stmt);
+                        $res3 = mysqli_stmt_get_result($stmt);
+                        mysqli_stmt_close($stmt);
+
+                        if ($res3 === false || mysqli_num_rows($res3) == 0) {
+                            $errorMessage = "Tidak ada kamar kosong untuk kelas ini.";
+                        } else {
+                            $kamarRow = mysqli_fetch_assoc($res3);
+                            $id_kamar = (int)$kamarRow['id_kamar'];
+
+                            // 4) insert pesankamar dan update status kamar dalam transaksi
+                            mysqli_begin_transaction($connect);
+                            try {
+                                $ins = mysqli_prepare($connect, "INSERT INTO pesankamar (id_pasien, id_kamar, tanggal_masuk) VALUES (?, ?, ?)");
+                                if (! $ins) throw new Exception(mysqli_error($connect));
+                                mysqli_stmt_bind_param($ins, 'iis', $id_pasien, $id_kamar, $tanggal);
+                                if (! mysqli_stmt_execute($ins)) {
+                                    throw new Exception(mysqli_stmt_error($ins));
+                                }
+                                mysqli_stmt_close($ins);
+
+                                $upd = mysqli_prepare($connect, "UPDATE kamar_fisik SET status_kamar = 'Terisi' WHERE id_kamar = ?");
+                                if (! $upd) throw new Exception(mysqli_error($connect));
+                                mysqli_stmt_bind_param($upd, 'i', $id_kamar);
+                                if (! mysqli_stmt_execute($upd)) {
+                                    throw new Exception(mysqli_stmt_error($upd));
+                                }
+                                mysqli_stmt_close($upd);
+
+                                mysqli_commit($connect);
+                                $isSuccess = true;
+                            } catch (Exception $e) {
+                                mysqli_rollback($connect);
+                                // handle duplicate or other DB errors
+                                if (strpos($e->getMessage(), 'Duplicate') !== false || mysqli_errno($connect) == 1062) {
+                                    $errorMessage = "Gagal: Pasien dengan NIK/BPJS ini sudah memesan kamar (Data Duplikat).";
+                                } else {
+                                    $errorMessage = "Gagal menyimpan data: " . $e->getMessage();
+                                }
+                            }
+                        }
+                    }
                 }
             }
-        } catch (Exception $e) {
-            $errorMessage = "Terjadi kesalahan: " . $e->getMessage();
         }
-        mysqli_stmt_close($stmt);
-    } else {
-        $errorMessage = "Query Error: " . mysqli_error($connect);
     }
 }
 
@@ -113,6 +157,7 @@ mysqli_close($connect);
             margin: 0 auto 15px;
             backdrop-filter: blur(5px);
         }
+
         .receipt-body {
             padding: 30px;
         }

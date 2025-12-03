@@ -92,7 +92,6 @@ foreach ($classes as $className) {
                                         <?= htmlspecialchars($row['status']) ?>
                                     </span>
                                 </td>
-                                <!-- gabungkan kolom sisanya menjadi satu kolom informatif -->
                                 <td colspan="3" class="text-muted" style="text-align: center;">Kamar kosong</td>
                             </tr>
                         <?php } else { ?>
