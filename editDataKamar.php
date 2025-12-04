@@ -29,18 +29,15 @@
         $check = mysqli_query($connect, "SELECT * FROM pesankamar WHERE id_kamar = '$id_kamar' AND id != '$id'");
         if (mysqli_num_rows($check) > 0) {
             echo "<script>alert('Gagal update: Nomor Kamar sudah digunakan oleh pasien lain.'); window.location.href='editDataKamar.php?id=$id';</script>";
-            exit;
+            exit();
         }
 
-        $query_update = "UPDATE pesankamar SET 
-                         id_kamar = '$id_kamar',
-                         nama = '$nama', 
-                         kelas = '$kelas', 
-                         status = '$status_kamar',
+        $status_renew = mysqli_query($connect, "UPDATE kamar_fisik SET status_kamar = '$status' WHERE id_kamar = '$id_kamar'");
+        $query_update = mysqli_query($connect,"UPDATE pesankamar SET 
                          tanggal_masuk = '$tanggal_masuk'
-                         WHERE id = '$id'";
+                         WHERE id = '$id'");
 
-        if (mysqli_query($connect, $query_update)) {
+        if (mysqli_affected_rows($connect) > 0) {
             echo "<script>alert('Data Kamar berhasil diupdate!'); window.location.href='dataPesanKamar.php';</script>";
         } else {
             echo "<script>alert('Gagal update: " . mysqli_error($connect) . "');</script>";
@@ -95,7 +92,7 @@
                             <div class="mb-3 row">
                                 <label class="col-sm-3 col-form-label">Nama Pasien</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" name="nama" value="<?= $data['nama'] ?>" required>
+                                    <input type="text" class="form-control" name="nama" value="<?= $data['nama'] ?>" required readonly>
                                 </div>
                             </div>
 
@@ -116,12 +113,9 @@
                             <div class="mb-3 row">
                                 <label class="col-sm-3 col-form-label">Kelas Kamar</label>
                                 <div class="col-sm-9">
-                                    <select class="form-select" name="kelas" required>
-                                        <option value="Kelas 1" <?= ($data['kelas'] == 'Kelas 1') ? 'selected' : '' ?>>Kelas 1</option>
-                                        <option value="Kelas 2" <?= ($data['kelas'] == 'Kelas 2') ? 'selected' : '' ?>>Kelas 2</option>
-                                        <option value="Kelas 3" <?= ($data['kelas'] == 'Kelas 3') ? 'selected' : '' ?>>Kelas 3</option>
-                                        <option value="VIP" <?= ($data['kelas'] == 'VIP') ? 'selected' : '' ?>>VIP</option>
-                                    </select>
+                                    <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="bpjs" value="<?= $data['kelas'] ?>" required readonly>
+                                </div>
                                 </div>
                             </div>
 
@@ -132,7 +126,6 @@
                                         <option value="Terisi" <?= ($data['status_kamar'] == 'Terisi') ? 'selected' : '' ?>>Terisi</option>
                                         <option value="Dibersihkan" <?= ($data['status_kamar'] == 'Dibersihkan') ? 'selected' : '' ?>>Dibersihkan</option>
                                         <option value="Perbaikan" <?= ($data['status_kamar'] == 'Perbaikan') ? 'selected' : '' ?>>Perbaikan</option>
-                                        <option value="Tersedia" <?= ($data['status_kamar'] == 'Tersedia') ? 'selected' : '' ?>>Tersedia</option>
                                     </select>
                                 </div>
                             </div>

@@ -47,7 +47,7 @@
 
 <?php
 include 'connection.php';
-$classes = ['VIP', 'Kelas 1', 'Kelas 2', 'Kelas 3'];
+$classes = ['VIP/VVIP', 'Kelas 1', 'Kelas 2', 'Kelas 3'];
 
 foreach ($classes as $className) {
     $sql = "SELECT pk.id, kf.id_kamar, kf.nomor_kamar, kk.nama_kelas AS kelas, kf.status_kamar AS status,

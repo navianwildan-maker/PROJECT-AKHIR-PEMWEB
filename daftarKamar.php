@@ -79,32 +79,48 @@ if (empty($nama) || empty($nik) || empty($kamar) || empty($tanggal)) {
 
                             // 4) insert pesankamar dan update status kamar dalam transaksi
                             mysqli_begin_transaction($connect);
-                            try {
-                                $ins = mysqli_prepare($connect, "INSERT INTO pesankamar (id_pasien, id_kamar, tanggal_masuk) VALUES (?, ?, ?)");
-                                if (! $ins) throw new Exception(mysqli_error($connect));
-                                mysqli_stmt_bind_param($ins, 'iis', $id_pasien, $id_kamar, $tanggal);
-                                if (! mysqli_stmt_execute($ins)) {
-                                    throw new Exception(mysqli_stmt_error($ins));
-                                }
-                                mysqli_stmt_close($ins);
 
-                                $upd = mysqli_prepare($connect, "UPDATE kamar_fisik SET status_kamar = 'Terisi' WHERE id_kamar = ?");
-                                if (! $upd) throw new Exception(mysqli_error($connect));
-                                mysqli_stmt_bind_param($upd, 'i', $id_kamar);
-                                if (! mysqli_stmt_execute($upd)) {
-                                    throw new Exception(mysqli_stmt_error($upd));
-                                }
-                                mysqli_stmt_close($upd);
-
-                                mysqli_commit($connect);
-                                $isSuccess = true;
-                            } catch (Exception $e) {
+                            // prepare insert
+                            $ins = mysqli_prepare($connect, "INSERT INTO pesankamar (id_pasien, id_kamar, tanggal_masuk) VALUES (?, ?, ?)");
+                            if (! $ins) {
                                 mysqli_rollback($connect);
-                                // handle duplicate or other DB errors
-                                if (strpos($e->getMessage(), 'Duplicate') !== false || mysqli_errno($connect) == 1062) {
-                                    $errorMessage = "Gagal: Pasien dengan NIK/BPJS ini sudah memesan kamar (Data Duplikat).";
+                                $errorMessage = "Gagal menyiapkan query insert: " . mysqli_error($connect);
+                            } else {
+                                mysqli_stmt_bind_param($ins, 'iis', $id_pasien, $id_kamar, $tanggal);
+                                $okIns = mysqli_stmt_execute($ins);
+                                if (! $okIns) {
+                                    $errno = mysqli_stmt_errno($ins);
+                                    $err = mysqli_stmt_error($ins);
+                                    mysqli_stmt_close($ins);
+                                    mysqli_rollback($connect);
+                                    if ($errno == 1062) {
+                                        $errorMessage = "Gagal: Pasien dengan NIK/BPJS ini sudah memesan kamar (Data Duplikat).";
+                                    } else {
+                                        $errorMessage = "Gagal menyimpan pesanan: [" . $errno . "] " . $err;
+                                    }
                                 } else {
-                                    $errorMessage = "Gagal menyimpan data: " . $e->getMessage();
+                                    mysqli_stmt_close($ins);
+
+                                    // prepare update status kamar
+                                    $upd = mysqli_prepare($connect, "UPDATE kamar_fisik SET status_kamar = 'Terisi' WHERE id_kamar = ?");
+                                    if (! $upd) {
+                                        mysqli_rollback($connect);
+                                        $errorMessage = "Gagal menyiapkan update kamar: " . mysqli_error($connect);
+                                    } else {
+                                        mysqli_stmt_bind_param($upd, 'i', $id_kamar);
+                                        $okUpd = mysqli_stmt_execute($upd);
+                                        if (! $okUpd) {
+                                            $errno = mysqli_stmt_errno($upd);
+                                            $err = mysqli_stmt_error($upd);
+                                            mysqli_stmt_close($upd);
+                                            mysqli_rollback($connect);
+                                            $errorMessage = "Gagal update status kamar: [" . $errno . "] " . $err;
+                                        } else {
+                                            mysqli_stmt_close($upd);
+                                            mysqli_commit($connect);
+                                            $isSuccess = true;
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -202,7 +218,7 @@ mysqli_close($connect);
                 <span class="detail-value"><?= htmlspecialchars($nik) ?></span>
             </div>
             <div class="detail-row">
-                <span class="detail-label">Nomor Kamar</span>
+                <span class="detail-label">Kelas Kamar</span>
                 <span class="detail-value"><?= htmlspecialchars($kamar) ?></span>
             </div>
             <div class="detail-row">
