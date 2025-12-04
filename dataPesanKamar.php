@@ -50,7 +50,7 @@ include 'connection.php';
 $classes = ['VIP', 'Kelas 1', 'Kelas 2', 'Kelas 3'];
 
 foreach ($classes as $className) {
-    $sql = "SELECT kf.id_kamar, kf.nomor_kamar, kk.nama_kelas AS kelas, kf.status_kamar AS status,
+    $sql = "SELECT pk.id, kf.id_kamar, kf.nomor_kamar, kk.nama_kelas AS kelas, kf.status_kamar AS status,
                    p.nama, pk.tanggal_masuk, pk.id_pasien
             FROM kamar_fisik kf
             JOIN kelas_kamar kk ON kf.id_kelas = kk.id_kelas
@@ -106,10 +106,10 @@ foreach ($classes as $className) {
                                 <td><?= htmlspecialchars($row['nama']) ?></td>
                                 <td><?= htmlspecialchars($row['tanggal_masuk']) ?></td>
                                 <td>
-                                    <a href="editDataKamar.php?id=<?= (int)$row['id_kamar'] ?>" class="btn btn-warning btn-sm">
+                                    <a href="editDataKamar.php?id=<?= (int)$row['id'] ?>" class="btn btn-warning btn-sm">
                                         <i class="bi bi-pencil-square"></i> Edit
                                     </a>
-                                    <a href="deleteDataKamar.php?id=<?= (int)$row['id_kamar'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                    <a href="deleteDataKamar.php?id=<?= (int)$row['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
                                         <i class="bi bi-trash"></i> Hapus
                                     </a>
                                 </td>

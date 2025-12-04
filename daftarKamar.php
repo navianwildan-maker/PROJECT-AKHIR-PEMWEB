@@ -185,7 +185,7 @@ mysqli_close($connect);
         <div class="receipt-header">
             <div class="icon-circle"><i class="bi bi-check-lg" style="font-size: 40px;"></i></div>
             <h3 class="fw-bold mb-1">Pemesanan Berhasil!</h3>
-            <p class="mb-0 opacity-75">Data tersimpan di sistem RS</p>
+            <p class="mb-0 opacity-75">Data tersimpan di sistem Puskesmas</p>
         </div>
         <div class="receipt-body">
             <div class="text-center mb-4">
@@ -202,7 +202,7 @@ mysqli_close($connect);
                 <span class="detail-value"><?= htmlspecialchars($nik) ?></span>
             </div>
             <div class="detail-row">
-                <span class="detail-label">Kelas Kamar</span>
+                <span class="detail-label">Nomor Kamar</span>
                 <span class="detail-value"><?= htmlspecialchars($kamar) ?></span>
             </div>
             <div class="detail-row">

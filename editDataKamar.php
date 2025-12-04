@@ -34,9 +34,9 @@
 
         $query_update = "UPDATE pesankamar SET 
                          id_kamar = '$id_kamar',
-                         nama = '$nama_pasien', 
+                         nama = '$nama', 
                          kelas = '$kelas', 
-                         status = '$status',
+                         status = '$status_kamar',
                          tanggal_masuk = '$tanggal_masuk'
                          WHERE id = '$id'";
 
@@ -47,7 +47,10 @@
         }
     }
 
-    $query = "SELECT * FROM pesankamar WHERE id = '$id'";
+    //menampilkan data lama
+    $query = "SELECT pk.id, pk.id_kamar, p.nama, p.nik, p.bpjs, kk.nama_kelas AS kelas, kf.status_kamar, pk.tanggal_masuk FROM pesankamar pk 
+            JOIN pasien p ON pk.id_pasien = p.id_pasien INNER JOIN kamar_fisik kf ON pk.id_kamar = kf.id_kamar 
+            INNER JOIN kelas_kamar kk ON kf.id_kelas = kk.id_kelas WHERE pk.id = '$id'";
     $result = mysqli_query($connect, $query);
     $data = mysqli_fetch_array($result);
 
@@ -84,7 +87,7 @@
                         <div class="mb-3 row">
                                 <label class="col-sm-3 col-form-label">Nomor Kamar</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" name="id_kamar" value="<?= $data['id_kamar'] ?>" required>
+                                    <input type="text" class="form-control" name="id_kamar" value="<?= $data['id_kamar'] ?>" required readonly>
                                 </div>
                             </div>
 
@@ -126,9 +129,10 @@
                                 <label class="col-sm-3 col-form-label">Status Kamar</label>
                                 <div class="col-sm-9">
                                     <select class="form-select" name="status" required>
-                                        <option value="Terisi" <?= ($data['status'] == 'Terisi') ? 'selected' : '' ?>>Terisi</option>
-                                        <option value="Kosong" <?= ($data['status'] == 'Kosong') ? 'selected' : '' ?>>Kosong</option>
-                                        <option value="Dibersihkan" <?= ($data['status'] == 'Dibersihkan') ? 'selected' : '' ?>>Dibersihkan</option>
+                                        <option value="Terisi" <?= ($data['status_kamar'] == 'Terisi') ? 'selected' : '' ?>>Terisi</option>
+                                        <option value="Dibersihkan" <?= ($data['status_kamar'] == 'Dibersihkan') ? 'selected' : '' ?>>Dibersihkan</option>
+                                        <option value="Perbaikan" <?= ($data['status_kamar'] == 'Perbaikan') ? 'selected' : '' ?>>Perbaikan</option>
+                                        <option value="Tersedia" <?= ($data['status_kamar'] == 'Tersedia') ? 'selected' : '' ?>>Tersedia</option>
                                     </select>
                                 </div>
                             </div>
