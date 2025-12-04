@@ -100,6 +100,11 @@
             </div>
         </div>
     </nav>
+    
+    <?php
+    include 'connection.php';
+    $hargaKelas = mysqli_query($connect, "SELECT nama_kelas, tarif FROM kelas_kamar");
+    ?>
 
     <section id="pesanKamar" class="section-padding bg-light">
         <div class="container">
@@ -148,10 +153,12 @@
                                     class="form-select form-select-lg"
                                     required>
                                     <option value="" selected disabled>-- Pilih Kamar --</option>
-                                    <option value="Kelas 1">Kelas 1 (Rp500.000/hari)</option>
-                                    <option value="Kelas 2">Kelas 2 (Rp300.000/hari)</option>
-                                    <option value="Kelas 3">Kelas 3 (Rp150.000/hari)</option>
-                                    <option value="VIP/VVIP">VIP/VVIP (Rp1.000.000/hari)</option>
+                                    <?php while ($dataHarga = mysqli_fetch_assoc($hargaKelas)) { ?>
+                                        <option value="<?= htmlspecialchars($dataHarga['nama_kelas']) ?>"
+                                                data-tarif="<?= (int)$dataHarga['tarif'] ?>">
+                                            <?= htmlspecialchars($dataHarga['nama_kelas']) ?> (Rp<?= number_format($dataHarga['tarif'],0,',','.') ?>/hari)
+                                        </option>
+                                    <?php } ?>       
                                 </select>
                             </div>
                             

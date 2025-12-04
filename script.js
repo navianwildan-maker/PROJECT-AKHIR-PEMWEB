@@ -60,12 +60,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (formPemesanan) {
 
-        const hargaKamar = {
-            "Kelas 1": 500000,
-            "Kelas 2": 300000,
-            "Kelas 3": 150000,
-            "VIP/VVIP": 1000000,
+        const getTarifSelected = () => {
+            const opt = kamarSelect && kamarSelect.selectedOptions && kamarSelect.selectedOptions[0];
+            if (!opt) return 0;
+            const t = opt.dataset ? opt.dataset.tarif : opt.getAttribute('data-tarif');
+            return t ? parseInt(t.replace(/\D/g, ''), 10) : 0;
         };
+
         const BIAYA_ADMIN = 5500;
 
         const kamarSelect = document.getElementById('kamar');
@@ -84,10 +85,16 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const updateRingkasan = () => {
-            const selectedKamar = kamarSelect.value;
+            const selectedKamarRaw = kamarSelect.value;
             const hasBPJS = bpjsInput.value.trim() !== '';
 
-            let biayaKamar = hargaKamar[selectedKamar] || 0;
+            const normalizeMap = {
+                'VIP/VVIP': 'VIP',
+                'VVIP': 'VIP' 
+            };
+            const selectedKamar = normalizeMap[selectedKamarRaw] ?? selectedKamarRaw;
+
+            let biayaKamar = getTarifSelected();
             let biayaKamarText = formatRupiah(biayaKamar);
 
             const isKelas2or3 = (selectedKamar === 'Kelas 2' || selectedKamar === 'Kelas 3');
